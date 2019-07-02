@@ -1,0 +1,63 @@
+<html>
+
+<head>
+    <title>Peek a Book</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+        integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <!-- <link rel="stylesheet" href="/css/signin.css"> -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <script src="/angular.min.js"></script>
+    <style>
+        .blue {
+            background-color: #198b8b;
+            height: 25%;
+        }
+
+        .header {
+            font-size: 50px;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="jumbotron blue">
+        <span class="header">Peek a Book</span>
+    </div>
+    <table class="table">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Roll No</th>
+                <th scope="col">Name</th>
+                <th scope="col">contact No</th>
+                <th scope="col">Department</th>
+                <th scope="col">Year</th>
+                <th scope="col">Stay</th>
+                <th scope="col">Campus</th>
+            </tr>
+        </thead>
+        <tbody id="btable">
+            <% students.forEach(student=>{ %>
+            <tr>
+                <td><%= student.roll_no %></td>
+                <td><%= student.name %></td>
+                <td><%= student.contact_no %></td>
+                <td><%= student.department %></td>
+                <td><%= student.year %></td>
+                <% if(student.h_or_d == 'H') {%>
+                    <td>Hosteller</td>
+                <% } else { %>
+                    <td>Dayscholar</td>
+                <% } %>
+                <td><%= student.campus %></td>
+            </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</body>
+<script src="/js/dashboard-ang.js"></script>
+
+</html>

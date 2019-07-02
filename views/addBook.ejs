@@ -1,0 +1,88 @@
+<html>
+
+<head>
+    <title>Peek a Book</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+        integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <!-- <link rel="stylesheet" href="/css/signin.css"> -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <script src="/angular.min.js"></script>
+    <style>
+        .blue {
+            background-color: #198b8b;
+            height: 25%;
+        }
+
+        .header {
+            font-size: 50px;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body ng-app="peekabook" ng-controller="myCntrl">
+    <div class="jumbotron blue">
+        <span class="header">Peek a Book</span>
+    </div>
+    <div class="container">
+        <% if(code) {%>
+        <div class="alert alert-success">
+            <span class="message">Book inserted successfully !!</span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close" ng-click="closeAlert()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <% } %>
+        <form method="POST" action="/dashboard/addBookForm">
+            <div class="input-group form-group">
+                <div class="input-group-prepend">
+                    <label for="name" class="input-group-text">
+                        Name
+                    </label>
+                </div>
+                <input name="name" id="name" class="form-control bg-white" type="text" placeholder="Name" required>
+            </div>
+            <div class="input-group form-group">
+                <div class="input-group-prepend">
+                    <label for="author" class="input-group-text">
+                        Author Name
+                    </label>
+                </div>
+                <input name="author" id="author" class="form-control bg-white" type="text" placeholder="Author name"
+                    required>
+            </div>
+            <div class="input-group form-group">
+                <div class="input-group-prepend">
+                    <label for="subject" class="input-group-text">
+                        Subject
+                    </label>
+                </div>
+                <input name="subject" id="subject" class="form-control bg-white" type="text" placeholder="Subject"
+                    required>
+            </div>
+            <div class="input-group form-group">
+                <div class="input-group-prepend">
+                    <label for="price" class="input-group-text">
+                        Price
+                    </label>
+                </div>
+                <input name="price" id="price" class="form-control bg-white" type="number" placeholder="Price" required>
+            </div>
+            <div class="input-group form-group">
+                <div class="input-group-prepend">
+                    <label for="available" class="input-group-text">
+                        Available
+                    </label>
+                </div>
+                <input name="available" id="available" class="form-control bg-white" type="number"
+                    placeholder="Available" required>
+            </div>
+            <button class="btn btn-primary" type="submit">Add Book</button>
+        </form>
+    </div>
+</body>
+<script src="/js/addBook-ang.js"></script>
+</html>

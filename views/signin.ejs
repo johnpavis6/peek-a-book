@@ -1,0 +1,44 @@
+<html>
+
+<head>
+    <title>Peek a Book</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+        integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <!-- <link rel="stylesheet" href="/css/signin.css"> -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/signin.css">
+</head>
+
+<body>
+        <div class="jumbotron blue">
+            <span class="header">Peek a Book</span>
+        </div>
+    <div class="container">
+        <div class="card border-primary">
+            <div class="card-header text-primary border-primary">
+                <b>Sign In</b>
+            </div>
+            <div class="card-body">
+                <form class="form" method="POST" action='/signin'>
+                    <div class="input-group form-group">
+                        <div class="input-group-prepend">
+                            <label for="email" class="input-group-text"><i class="fas fa-user"></i></label>
+                        </div>
+                        <input id="email" name="email" class="form-control" type="text" placeholder="Email">
+                    </div>
+                    <div class="input-group form-group">
+                        <div class="input-group-prepend">
+                            <label for="password" class="input-group-text"><i class="fas fa-key"></i></label>
+                        </div>
+                        <input id="password" name="password" class="form-control" type="password"
+                            placeholder="password">
+                    </div>
+                    <button class="btn btn-primary" type="submit">Sign In</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

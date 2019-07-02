@@ -1,0 +1,123 @@
+<html>
+
+<head>
+    <title>Peek a Book</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+        integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <!-- <link rel="stylesheet" href="/css/signin.css"> -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <script src="/angular.min.js"></script>
+    <style>
+        .blue {
+            background-color: #198b8b;
+            height: 25%;
+        }
+
+        .header {
+            font-size: 50px;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body ng-app="peekabook" ng-controller="myCntrl">
+    <div class="jumbotron blue">
+        <span class="header">Peek a Book</span>
+    </div>
+    <div class="container">
+        <% if(code == 1) {%>
+        <div class="alert alert-success">
+            <span class="message">Student inserted successfully !!</span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close" ng-click="closeAlertStudent()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <% } %>
+
+        <% if(code == 2) {%>
+            <div class="alert alert-danger">
+                <span class="message">Error Occured!!</span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close" ng-click="closeAlertStudent()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        <% } %>
+        
+        <form method="POST" action="/dashboard/addStudentForm">
+            <div class="input-group form-group">
+                <div class="input-group-prepend">
+                    <label for="roll_no" class="input-group-text">
+                        Roll No
+                    </label>
+                </div>
+                <input name="roll_no" id="roll_no" class="form-control bg-white" type="number" 
+                pattern="\d{10}" title="Please match the required format" required>
+            </div>
+
+            <div class="input-group form-group">
+                <div class="input-group-prepend">
+                    <label for="name" class="input-group-text">
+                        Name
+                    </label>
+                </div>
+                <input name="name" id="name" class="form-control bg-white" type="text" required>
+            </div>
+
+            <div class="input-group form-group">
+                <div class="input-group-prepend">
+                    <label for="contact_no" class="input-group-text">
+                        Contact No
+                    </label>
+                </div>
+                <input name="contact_no" id="contact_no" class="form-control bg-white" type="number" required>
+            </div>
+
+            <div class="input-group form-group">
+                <div class="input-group-prepend">
+                    <label for="department" class="input-group-text">
+                        Department
+                    </label>
+                </div>
+                <input name="department" id="department" class="form-control bg-white" type="text" required>
+            </div>
+            
+            <div class="input-group form-group">
+                <div class="input-group-prepend">
+                    <label for="year" class="input-group-text">
+                        year
+                    </label>
+                </div>
+                <input name="year" id="year" class="form-control bg-white" type="number" required>
+            </div>
+
+            <div class="input-group form-group">
+                <div class="input-group-prepend">
+                    <label for="stay" class="input-group-text">
+                        Stay
+                    </label>
+                </div>
+                <select class="form-control bg-white" id="stay" name="stay"
+                    ng-disabled="tag_disabled">
+                    <option value="H">Hosteller</option>
+                    <option value="D">Dayscholar</option>
+                </select>
+            </div>
+
+            <div class="input-group form-group">
+                <div class="input-group-prepend">
+                    <label for="campus" class="input-group-text">
+                        Campus
+                    </label>
+                </div>
+                <input name="campus" id="campus" class="form-control bg-white" type="text" required>
+            </div>
+
+            <button class="btn btn-primary" type="submit">Add Student</button>
+        </form>
+    </div>
+</body>
+<script src="/js/addBook-ang.js"></script>
+</html>

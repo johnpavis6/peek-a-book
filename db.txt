@@ -1,0 +1,48 @@
+create table students(
+    roll_no integer,
+    name varchar(80),
+    contact_no varchar,
+    department varchar(20),
+    year integer,
+    h_or_d varchar(1),
+    campus varchar(10),
+    primary key(roll_no)
+);
+
+create table books(
+    id integer auto_increment,
+    name text,
+    author text,
+    subject text,
+    price integer,
+    available integer,
+    primary key(id)
+);
+
+create table books_bought(
+    entry_id integer auto_increment,
+    user_id integer,
+    book_id integer,
+    no_of_books integer,
+    price integer,
+    sold integer,
+    unsold integer,
+    date date,
+    primary key(entry_id,user_id,book_id),
+    foreign key(user_id) references students
+(roll_no),
+    foreign key(book_id) references books(id)
+);
+
+create table books_sold(
+    user_id varchar(10),
+    owner_id varchar(10),
+    book_id varchar(10),
+    no_of_books integer,
+    tot_price integer,
+    time integer,
+    primary key(user_id,owner_id,book_id),
+    foreign key(owner_id) references books_bought(user_id),
+    foreign key(book_id) references books_bought(book_id)
+);
+

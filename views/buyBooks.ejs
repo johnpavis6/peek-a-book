@@ -1,0 +1,102 @@
+<html>
+
+<head>
+    <title>Peek a Book</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+        integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <!-- <link rel="stylesheet" href="/css/signin.css"> -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <script src="/angular.min.js"></script>
+    <style>
+        .blue {
+            background-color: #198b8b;
+            height: 25%;
+        }
+
+        .header {
+            font-size: 50px;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body ng-app="peekabook" ng-controller="myCntrl">
+    <div class="jumbotron blue">
+        <span class="header">Peek a Book</span>
+    </div>
+    <div class="container">
+        <% if(code == 1) {%>
+        <div class="alert alert-success">
+            <span class="message">Student inserted successfully !!</span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close" ng-click="closeAlertStudent()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <% } %>
+
+        <% if(code == 2) {%>
+            <div class="alert alert-danger">
+                <span class="message">Error Occured!!</span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close" ng-click="closeAlertBooksBought()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        <% } %>
+        
+        <form method="POST" action="/dashboard/addStudentForm">
+            <div class="input-group form-group">
+                <div class="input-group-prepend">
+                    <label for="roll_no" class="input-group-text">
+                        Roll No
+                    </label>
+                </div>
+                <input name="roll_no" id="roll_no" class="form-control bg-white" type="number" 
+                pattern="\d{10}" title="Please match the required format" required>
+            </div>
+
+            <div class="input-group form-group">
+                <div class="input-group-prepend">
+                    <label for="book_bought" class="input-group-text">
+                        Books
+                    </label>
+                </div>
+                <div class="input-group-append">
+                    <button class="btn btn-secondary" type="button" ng-click="inc('book_bought')"
+                        ng-disabled="tag_disabled">+</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-group form-group col-12 flex-nowrap"
+                    ng-repeat="exp in data.book_bought track by $index">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text">{{$index+1}}.</label>
+                    </div>
+                    <input ng-model="data.book_bought[$index].name" name="book_bought" type="text"
+                        ng-disabled="tag_disabled" placeholder="Book Name" class="form-control bg-white">
+                    <input ng-model="data.book_bought[$index].author" name="book_bought" type="text"
+                        ng-disabled="tag_disabled" placeholder="Author" class="form-control bg-white">
+                    <input ng-model="data.book_bought[$index].subject" name="book_bought" type="text"
+                        ng-disabled="tag_disabled" placeholder="Subject" class="form-control bg-white">
+                    <input ng-model="data.book_bought[$index].price" name="book_bought" type="number" min=1
+                        ng-disabled="tag_disabled" placeholder="Price" class="form-control bg-white">
+                    <input ng-model="data.book_bought[$index].quantity" name="book_bought" type="number" min=1
+                        ng-disabled="tag_disabled" placeholder="Quantity" class="form-control bg-white">
+                    <input ng-model="data.book_bought[$index].tot_price" name="book_bought" type="number" 
+                        ng-value="data.book_bought[$index].price * data.book_bought[$index].quantity"
+                        ng-disabled="tag_disabled" class="form-control bg-white" readonly>
+                    <div class="input-group-append">
+                        <button class="btn btn-secondary" type="button" ng-click="dec('book_bought',$index)"
+                            ng-disabled="tag_disabled">-</button>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" type="submit">Add Student</button>
+        </form>
+    </div>
+</body>
+<script src="/js/addBook-ang.js"></script>
+</html>

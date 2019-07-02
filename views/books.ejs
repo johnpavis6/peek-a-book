@@ -1,0 +1,57 @@
+<html>
+
+<head>
+    <title>Peek a Book</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+        integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <!-- <link rel="stylesheet" href="/css/signin.css"> -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <script src="/angular.min.js"></script>
+    <style>
+        .blue {
+            background-color: #198b8b;
+            height: 25%;
+        }
+
+        .header {
+            font-size: 50px;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="jumbotron blue">
+        <span class="header">Peek a Book</span>
+    </div>
+    <table class="table">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Name</th>
+                <th scope="col">Author</th>
+                <th scope="col">Subject</th>
+                <th scope="col">Price</th>
+                <th scope="col">Available</th>
+            </tr>
+        </thead>
+        <tbody id="btable">
+            <% books.forEach(book=>{ %>
+            <tr>
+                <td><%= book.id %></td>
+                <td><%= book.name %></td>
+                <td><%= book.author %></td>
+                <td><%= book.subject %></td>
+                <td><%= book.price %></td>
+                <td><%= book.available %></td>
+            </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</body>
+<script src="/js/dashboard-ang.js"></script>
+
+</html>
