@@ -2,5 +2,13 @@
     "presets": [
         "env",
         "react"
+    ],
+    "plugins": [
+        [
+            "transform-runtime",
+            {
+                "regenerator": true
+            }
+        ]
     ]
 }

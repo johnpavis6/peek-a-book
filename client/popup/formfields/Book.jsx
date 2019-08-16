@@ -5,34 +5,42 @@ class Book extends Component {
         super(props);
         this.state = {
             book: this.props.book || {},
+            fields: this.props.fields || {},
+            errors: this.props.errors || {}
         };
-        this.setKeyValueWithPrev = this.setKeyValueWithPrev.bind(this);
-        this.getValue = this.getValue.bind(this);
+        this.validateFields = this.validateFields.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
-    getValue(key) {
-        let value = this.state.book[key];
-        return value ? { 'label': value, 'value': value } : this.state[key][0];
+    validateFields() {
+        return _.maxBy(Object.values(this.state.errors), o => { return o.length });
     }
-    setKeyValueWithPrev(key, value) {
-        let temp = this.state.book;
-        temp[key] = value;
-        this.setState({ book: temp }, () => {
-            console.log(`this.state.book::`, this.state.book)
-        });
+    handleSubmit(e) {
+        e.preventDefault();
+        console.log(this.state.fields);
     }
     render() {
         return (
-            <div>
-                <input className="input-field"
-                    placeholder="Subject"
-                    onChange={(e) => { this.setKeyValueWithPrev("subject", e.target.value) }} />
-                <input className="input-field"
-                    placeholder="Name"
-                    onChange={(e) => { this.setKeyValueWithPrev("name", e.target.value) }} />
-                <input className="input-field"
-                    placeholder="Author Name"
-                    onChange={(e) => { this.setKeyValueWithPrev("authorName", e.target.value) }} />
-            </div>
+            <form onSubmit={this.handleSubmit}>
+                <div className="input-group">
+                    <input className="input-field w-100" type="text"
+                        placeholder="Book name"
+                        onChange={(e) => { this.state.fields.bookName = e.target.value }} autoFocus />
+                    <Error errors={this.state.errors["bookName"]} />
+                </div>
+                <div className="input-group">
+                    <input className="input-field w-100" type="text"
+                        placeholder="Subject name"
+                        onChange={(e) => { this.state.fields.subjectName = e.target.value }} />
+                    <Error errors={this.state.errors["subjectName"]} />
+                </div>
+                <div className="input-group">
+                    <input className="input-field w-100" type="text"
+                        placeholder="Author name"
+                        onChange={(e) => { this.state.fields.authorName = e.target.value }} />
+                    <Error errors={this.state.errors["authorName"]} />
+                </div>
+                {this.props.getFormFooter()}
+            </form>
         );
     }
 }

@@ -1,6 +1,9 @@
 let express = require('express');
 let app = express();
 
+let bodyParser = require('body-parser');
+app.use(bodyParser.json());
+
 let cookieSession = require('cookie-session');
 app.use(cookieSession({
     name: 'peek-a-book',
@@ -20,7 +23,13 @@ app.get('*', (req, res) => {
 });
 
 let port = 5050;
-app.listen(port, (err) => {
-    if (err) throw err;
-    console.log(`App runs on http://localhost:${port}`);
+let mongo = require('./models/db');
+Promise.all([mongo.connect()]).then(msgs => {
+    console.log(msgs)
+    app.listen(port, (err) => {
+        if (err) throw err;
+        console.log(`App runs on http://localhost:${port}`);
+    });
+}).catch(err => {
+    console.log(err);
 });

@@ -1,17 +1,17 @@
-let connection = require('../models/db').connection;
+let mongo = require('../models/db');
 let status = require('../models/status');
 
 exports.all = function (req, res) {
-    connection.query('select * from students', function (err, results) {
+    mongo.db.collection("users").find({}).toArray((err, results) => {
         if (err) return status.error(res, { err: err });
-        status.success(res, { data: results });
-    });
+        status.success(res, { results: results });
+    })
 }
 
 exports.new = function (req, res) {
-    let data = req.data;
-    connection.query('insert into students set ?', data, function (err, results) {
+    console.log("data::", req.data);
+    mongo.db.collection("users").insertOne(req.data, (err, result) => {
         if (err) return status.error(res, { err: err });
-        status.success(res, { message: "Student added successfully" });
+        status.success(res, { message: "Successfully added" });
     });
 }

@@ -1,76 +1,107 @@
 import React, { Component } from 'react';
 import Select from 'react-select';
-import Error, * as validator from '../Error/Error.jsx';
+import Error, * as validator from './Error/Error.jsx';
 import _ from 'lodash';
+import api from 'axios';
+import { toastr } from 'react-redux-toastr'
 
+const fields = ['name', 'rollNo', 'phone', 'email', 'year', 'campus', 'stayType'];
 const years = [1, 2, 3, 4, 5];
 const stayTypes = ["Hosteller", "Dayscholar"];
 const campuses = ["CEG", "ACT", "SAP", "MIT"];
 
-
-
-class Student extends Component {
+class User extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            years: years.map((opt, index) => { return { label: opt, value: index } }),
-            stayTypes: stayTypes.map((opt, index) => { return { label: opt, value: index } }),
-            campuses: campuses.map((opt, index) => { return { label: opt, value: index } }),
+            years: years.map((opt) => { return { label: opt, value: opt } }),
+            stayTypes: stayTypes.map((opt) => { return { label: opt, value: opt } }),
+            campuses: campuses.map((opt) => { return { label: opt, value: opt } }),
+            fields: this.props.fields || {},
+            errors: {}
         };
+        this.getErrors = this.getErrors.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+        this.submitForm = this.submitForm.bind(this);
     }
-    validateFields(fields) {
-        let errors = {};
-        // errors.email = validator.isEmail(fields.email);
-        // errors.phone = validator.isPhone(fields.phone);
-        this.props.setErrors(errors);
-        return _.maxBy(Object.values(errors), o => { return o.length });
+    componentWillReceiveProps() {
+        this.setState({ errors: {} });
+    }
+    getErrors() {
+        let errors = {}, hasError = false;
+        fields.forEach(o => {
+            errors[o] = validator.isEmpty(this.state.fields[o])
+            if (errors[o].length) hasError = true;
+        });
+        return { errors: errors, hasError: false };
+    }
+    submitForm() {
+        let url = '/api/v1/users/' + (this.state.fields.id ? "edit" : "new");
+        api.post(url, this.state.fields).then(res => {
+            console.log(res.data);
+            toastr.success('Success', res.data.message, { transitionIn: 'bounceIn' });
+        }).catch(err => { console.log(err); })
+    }
+    handleSubmit(e) {
+        e.preventDefault();
+        let { errors, hasError } = this.getErrors();
+        this.setState({ errors: errors });
+        if (hasError) { return; }
+        this.submitForm();
     }
     render() {
         return (
-            <div>
-                <input className="input-field" type="text"
-                    placeholder="Name"
-                    value={this.props.getKeyValue("name")}
-                    onChange={(e) => { this.props.setKeyValue("name", e.target.value) }} autoFocus />
-                <Error errors={this.props.getKeyErrors("name")} />
-                <input className="input-field" type="text"
-                    placeholder="Roll no"
-                    value={this.props.getKeyValue("rollNo")}
-                    onChange={(e) => { this.props.setKeyValue("rollNo", e.target.value) }} />
-                <Error errors={this.props.getKeyErrors("rollNo")} />
-                <input className="input-field"
-                    placeholder="Phone" type="text"
-                    value={this.props.getKeyValue("phone")}
-                    onChange={(e) => { this.props.setKeyValue("phone", e.target.value) }} />
-                <Error errors={this.props.getKeyErrors("phone")} />
-                <input className="input-field" type="text"
-                    placeholder="Email"
-                    value={this.props.getKeyValue("email")}
-                    onChange={(e) => { this.props.setKeyValue("email", e.target.value) }} />
-                <Error errors={this.props.getKeyErrors("email")} />
-                <Select className="form-field"
-                    placeholder="Year"
-                    value={this.props.getKeyValue("year", true)}
-                    options={this.state.years}
-                    onChange={(e) => { this.props.setKeyValue("year", e.label) }} />
-                <Error errors={this.props.getKeyErrors("year")} />
-                <Select
-                    className="form-field"
-                    placeholder="Campus"
-                    value={this.props.getKeyValue("campus", true)}
-                    options={this.state.campuses}
-                    onChange={(e) => { this.props.setKeyValue("campus", e.label) }} />
-                <Error errors={this.props.getKeyErrors("campus")} />
-                <Select
-                    className="form-field"
-                    placeholder="Stay"
-                    value={this.props.getKeyValue("stayType", true)}
-                    options={this.state.stayTypes}
-                    onChange={(e) => { this.props.setKeyValue("stayType", e.label) }} />
-                <Error errors={this.props.getKeyErrors("campus")} />
-            </div>
+            <form onSubmit={this.handleSubmit}>
+                <div className="input-group">
+                    <input className="input-field w-100" type="text"
+                        placeholder="Name"
+                        onChange={(e) => { this.state.fields.name = e.target.value }} autoFocus />
+                    <Error errors={this.state.errors["name"]} />
+                </div>
+                <div className="d-flex">
+                    <div className="input-group col">
+                        <input className="input-field w-100" type="text"
+                            placeholder="Roll no"
+                            onChange={(e) => { this.state.fields.rollNo = e.target.value }} />
+                        <Error errors={this.state.errors["rollNo"]} />
+                    </div>
+                    <div className="input-group col">
+                        <input className="input-field w-100"
+                            placeholder="Phone" type="text"
+                            onChange={(e) => { this.state.fields.phone = e.target.value }} />
+                        <Error errors={this.state.errors["phone"]} />
+                    </div>
+                </div>
+                <div className="input-group">
+                    <input className="input-field w-100" type="text"
+                        placeholder="Email"
+                        onChange={(e) => { this.state.fields.email = e.target.value }} />
+                    <Error errors={this.state.errors["email"]} />
+                </div>
+                <div className="d-flex">
+                    <div className="input-group col">
+                        <Select placeholder="Year"
+                            options={this.state.years}
+                            onChange={(e) => { this.state.fields.year = e.label }} />
+                        <Error errors={this.state.errors["year"]} />
+                    </div>
+                    <div className="input-group col">
+                        <Select placeholder="Campus"
+                            options={this.state.campuses}
+                            onChange={(e) => { this.state.fields.campus = e.label }} />
+                        <Error errors={this.state.errors["campus"]} />
+                    </div>
+                </div>
+                <div className="input-group">
+                    <Select placeholder="Stay"
+                        options={this.state.stayTypes}
+                        onChange={(e) => { this.state.fields.stayType = e.label }} />
+                    <Error errors={this.state.errors["campus"]} />
+                </div>
+                {this.props.getFormFooter()}
+            </form>
         );
     }
 }
 
-export default Student;
+export default User;

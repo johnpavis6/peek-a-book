@@ -8,21 +8,18 @@ class BuyBook extends Component {
         super(props);
         this.state = {
             buyBook: this.props.buyBook || {},
+            fields: this.props.fields || {},
+            errors: this.props.errors || {}
         };
-        this.setKeyValueWithPrev = this.setKeyValueWithPrev.bind(this);
-        this.getValue = this.getValue.bind(this);
-        this.submitForm = this.submitForm.bind(this);
+        this.validateFields = this.validateFields.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
-    getValue(key) {
-        let value = this.state.buyBook[key];
-        return value ? { 'label': value, 'value': value } : this.state[key][0];
+    validateFields() {
+        return _.maxBy(Object.values(this.state.errors), o => { return o.length });
     }
-    setKeyValueWithPrev(key, value) {
-        let temp = this.state.buyBook;
-        temp[key] = value;
-        this.setState({ buyBook: temp }, () => {
-            console.log(`this.state.buyBook::`, this.state.buyBook)
-        });
+    handleSubmit(e) {
+        e.preventDefault();
+        console.log(this.state.fields);
     }
     render() {
         return (

@@ -24,16 +24,18 @@ export default Error;
 
 import validator from 'validator';
 
-export function isEmail(email) {
-    let errors = [];
-    if (!email) errors.push("This field is required");
-    if (!email || !validator.isEmail(email)) errors.push("This field should be in email format")
+export function isEmail(val) {
+    let errors = isEmpty(val);
+    if (!val || !validator.isEmail(val)) errors.push("This field should be in email format")
     return errors;
 }
 
-export function isPhone(phone) {
-    let errors = [];
-    if (!phone) errors.push("This field is required");
-    if (!phone || !validator.isPhone(phone)) errors.push("This field should be in phone format")
+export function isPhone(val) {
+    let errors = isEmpty(val);
+    if (!val || !validator.isPhone(val)) errors.push("This field should be in phone format")
     return errors;
+}
+
+export function isEmpty(val) {
+    return (!val) ? ["This field is required"] : [];
 }

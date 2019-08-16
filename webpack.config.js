@@ -28,5 +28,5 @@ module.exports = {
                 loader: 'style-loader!css-loader!resolve-url-loader!sass-loader?sourceMap'
             },
         ]
-    }
+    },
 }
