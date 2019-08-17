@@ -25,7 +25,7 @@ class App extends Component {
             <div className="flex-column h-100">
                 <Router>
                     <div className="navbar d-flex position-relative">
-                        <div className="icon d-flex"><span className="m-auto">PaB</span></div>
+                        <img className="icon" src="/images/logo.png"/>
                         <div className="navbar-brand d-flex">
                             <span>Peek a Book</span>
                         </div>

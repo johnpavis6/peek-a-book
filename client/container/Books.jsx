@@ -9,6 +9,7 @@ const columns = [
     { label: "Year", key: "year" }, { label: "Campus", key: "campus" },
     { label: "Stay", key: "stayType" }
 ];
+const options = { transitionIn: 'bounceInDown', transitionOut: 'bounceOutUp' };
 
 class Books extends Component {
     constructor() {
@@ -38,12 +39,13 @@ class Books extends Component {
         return ans;
     }
     deleteEntry(_id) {
-        let url = `/book/${_id}`;
+        let url = `/api/v1/book/${_id}`;
         api.delete(url).then(res => {
-            console.log(res);
+            toastr.success('Success', res.data.message, options);
+            this.getResults();
         }).catch(err => {
             console.log(err);
-            toastr.error('Error', err.message, { transitionIn: 'bounceInDown', transitionOut: 'bounceOutUp' });
+            toastr.error('Error', err.message, options);
         });
     }
     getRenderData() {

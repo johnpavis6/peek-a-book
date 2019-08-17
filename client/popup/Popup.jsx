@@ -9,6 +9,7 @@ const forms = {
     "book": { label: "Book", fields: ['bookName', 'subjectName', 'authorName'] },
     "buy-book": { label: "Buy Book", fields: ['studentId', 'bookId'] }
 };
+const options = { transitionIn: 'bounceInDown', transitionOut: 'bounceOutUp' };
 
 class AddStudent extends Component {
     constructor(props) {
@@ -16,12 +17,15 @@ class AddStudent extends Component {
         this.state = {
             forms: Object.keys(forms).map((form, index) => { return { label: forms[form].label, value: form } }),
             form: this.props.form || { selectedForm: 'user', fields: {}, errors: {} },
-            popupScale: true
+            popupScale: true,
+            defaultSelects: {}
         }
         this.scalePopup = this.scalePopup.bind(this);
         this.setForm = this.setForm.bind(this);
         this.hidePopup = this.hidePopup.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.setUsers = this.setUsers.bind(this);
+        this.setBooks = this.setBooks.bind(this);
     }
     getDefaultFieldOptions(type) {
         switch (type) {
@@ -35,6 +39,22 @@ class AddStudent extends Component {
         let defaultFieldValues = this.getDefaultFieldOptions(type)
         let selectOptions = defaultFieldValues.map(o => { return { label: o, value: o } });
         return selectOptions;
+    }
+    getData(type, callback) {
+        let url = `/api/v1/${type}/all`;
+        api.get(url).then(callback).catch(err => { console.error(err) });
+    }
+    setUsers(resp) {
+        let data=resp.data.results;
+        let users = data.map(o => { return { label: `${o.name}-${o.rollNo}`, value: o._id } });
+        this.state.defaultSelects.users = users;
+        this.forceUpdate();
+    }
+    setBooks(resp) {
+        let data=resp.data.results;
+        let books = data.map(o => { return { label: o.bookName, value: o._id } });
+        this.state.defaultSelects.books = books;
+        this.forceUpdate();
     }
     scalePopup() {
         this.setState({ popupScale: false }, () => { this.setState({ popupScale: true }) });
@@ -157,11 +177,13 @@ class AddStudent extends Component {
         );
     }
     getBuyBookFormFields() {
+        this.getData('users', this.setUsers);
+        this.getData('books', this.setBooks);
         return (
             <div>
                 <div className="input-group">
                     <Select placeholder="Select Student"
-                        options={this.state.studentId}
+                        options={this.state.defaultSelects.students}
                         value={this.getFieldValue('studentId', true)}
                         onChange={(e) => { this.setFieldValue('studentId', e.value) }} />
                     <Error errors={this.getFieldError("studentId")} />
@@ -191,9 +213,13 @@ class AddStudent extends Component {
         let url = `/api/v1/${form.selectedForm}`;
         let method = form.fields._id ? "put" : "post";
         api[method](url, form.fields).then(res => {
+            this.hidePopup();
             console.log(res.data);
-            toastr.success('Success', res.data.message, { transitionIn: 'bounceIn' });
-        }).catch(err => { console.log(err); })
+            toastr.success('Success', res.data.message, options);
+        }).catch(err => {
+            console.log(err);
+            toastr.success('Error', err.message, options);
+        })
     }
     getSelectedFormFields() { return forms[this.state.form.selectedForm].fields; }
     getErrors() {
@@ -222,7 +248,6 @@ class AddStudent extends Component {
     dontClose(e) { e.stopPropagation() }
     getSelectLabelValue(value) { return { label: value, value: value }; }
     render() {
-        console.log(this.state.form.fields)
         return (
             <div className={`popup`}>
                 <div className={`popup-container popup-blur-${this.state.popupScale}`}
