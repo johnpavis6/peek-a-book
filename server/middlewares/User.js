@@ -1,5 +1,5 @@
-exports.new = (req, res, next) => {
-    let data = {
+function getCommonFields(req) {
+    return {
         rollNo: req.body.rollNo,
         name: req.body.name,
         phone: req.body.phone,
@@ -8,9 +8,18 @@ exports.new = (req, res, next) => {
         year: req.body.year,
         stayType: req.body.stayType,
         campus: req.body.campus,
-        createdAt: new Date()
     };
-    req.body = {};
+}
+exports.create = (req, res, next) => {
+    let data = getCommonFields(req);
+    data.createdAt = new Date();
+    req.data = data;
+    next();
+}
+exports.update = (req, res, next) => {
+    let data = getCommonFields(req);
+    data._id = req.body._id;
+    data.updatedAt = new Date();
     req.data = data;
     next();
 }

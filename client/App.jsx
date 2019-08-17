@@ -9,14 +9,17 @@ class App extends Component {
     constructor() {
         super();
         this.state = {
-            showPopup: false
+            popupDisplay: false
         }
-        this.togglePopup = this.togglePopup.bind(this);
+        this.togglePopupDisplay = this.togglePopupDisplay.bind(this);
+        this.editPopup = this.editPopup.bind(this);
     }
-    togglePopup() {
-        this.setState({ showPopup: !this.state.showPopup });
+    togglePopupDisplay() {
+        this.setState({ popupDisplay: !this.state.popupDisplay });
     }
-
+    editPopup(selectedForm, fields) {
+        this.setState({ form: { selectedForm: selectedForm, fields: fields } }, this.togglePopupDisplay);
+    }
     render() {
         return (
             <div className="flex-column h-100">
@@ -26,8 +29,9 @@ class App extends Component {
                         <div className="navbar-brand d-flex">
                             <span>Peek a Book</span>
                         </div>
-                        <div className="add-btn" onClick={this.togglePopup}><i className="fas fa-plus"></i></div>
-                        <Popup showPopup={this.state.showPopup} togglePopup={this.togglePopup} />
+                        <div className="add-btn" onClick={this.togglePopupDisplay}><i className="fas fa-plus"></i></div>
+                        {this.state.popupDisplay &&
+                            <Popup form={this.state.form} togglePopupDisplay={this.togglePopupDisplay} />}
                     </div>
                     <div className="h-100 w-100 d-flex content">
                         <div className="content-menubar flex-column">
@@ -35,9 +39,9 @@ class App extends Component {
                             <Link className="link" to="/books/list"><i className="fas fa-book"></i></Link>
                         </div>
                         <div className="w-100 content-body flex-column">
-                            <Route path="/users/list" render={() => (<Users />)} />
-                            <Route path="/books/list" render={() => (<Books />)} />
-                            <Route path="/buy-books/list" render={() => (<BuyBooks />)} />
+                            <Route path="/users/list" render={() => (<Users editPopup={this.editPopup} />)} />
+                            <Route path="/books/list" render={() => (<Books editPopup={this.editPopup} />)} />
+                            <Route path="/buy-books/list" render={() => (<BuyBooks editPopup={this.editPopup} />)} />
                             <Route render={() => <Redirect to="/users/list" />} />
                         </div>
                     </div>

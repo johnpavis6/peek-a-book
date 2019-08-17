@@ -16,8 +16,9 @@ class AddStudent extends Component {
         this.state = {
             forms: Object.keys(forms).map((form, index) => { return { label: forms[form].label, value: form } }),
             form: this.props.form || { selectedForm: 'user', fields: {}, errors: {} },
-            scalePopup: this.props.showPopup
+            popupScale: true
         }
+        this.scalePopup = this.scalePopup.bind(this);
         this.setForm = this.setForm.bind(this);
         this.hidePopup = this.hidePopup.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -35,12 +36,15 @@ class AddStudent extends Component {
         let selectOptions = defaultFieldValues.map(o => { return { label: o, value: o } });
         return selectOptions;
     }
+    scalePopup() {
+        this.setState({ popupScale: false }, () => { this.setState({ popupScale: true }) });
+    }
     setForm(form) {
         let cForm = this.state.form;
         if (form.value == cForm.selectedForm) return;
         cForm.selectedForm = form.value;
         this.setState({ form: cForm });
-        this.setState({ scalePopup: false }, () => { this.setState({ scalePopup: true }) });
+        this.scalePopup();
     }
     getSelectedFormLabel() {
         let form = this.state.form;
@@ -57,9 +61,14 @@ class AddStudent extends Component {
     }
     setFieldValue(key, value) {
         this.state.form.fields[key] = value;
+        this.forceUpdate();
+    }
+    getFieldValue(key, forSelect = false) {
+        let value = this.state.form.fields[key];
+        return !forSelect ? value : value ? this.getSelectLabelValue(value) : null;
     }
     getFieldError(key) {
-        return this.state.form.errors[key];
+        return this.state.form.errors && this.state.form.errors[key];
     }
     getUserFormFields() {
         return (
@@ -67,6 +76,7 @@ class AddStudent extends Component {
                 <div className="input-group">
                     <input className="input-field w-100" type="text"
                         placeholder="Name"
+                        value={this.getFieldValue('name')}
                         onChange={(e) => { this.setFieldValue('name', e.target.value) }} />
                     <Error errors={this.getFieldError("name")} />
                 </div>
@@ -74,12 +84,14 @@ class AddStudent extends Component {
                     <div className="input-group col">
                         <input className="input-field w-100" type="text"
                             placeholder="Roll no"
+                            value={this.getFieldValue('rollNo')}
                             onChange={(e) => { this.setFieldValue('rollNo', e.target.value) }} />
                         <Error errors={this.getFieldError("rollNo")} />
                     </div>
                     <div className="input-group col">
                         <input className="input-field w-100"
                             placeholder="Phone" type="text"
+                            value={this.getFieldValue('phone')}
                             onChange={(e) => { this.setFieldValue('phone', e.target.value) }} />
                         <Error errors={this.getFieldError("phone")} />
                     </div>
@@ -87,6 +99,7 @@ class AddStudent extends Component {
                 <div className="input-group">
                     <input className="input-field w-100" type="text"
                         placeholder="Email"
+                        value={this.getFieldValue('email')}
                         onChange={(e) => { this.setFieldValue('email', e.target.value) }} />
                     <Error errors={this.getFieldError("email")} />
                 </div>
@@ -94,12 +107,14 @@ class AddStudent extends Component {
                     <div className="input-group col">
                         <Select placeholder="Year"
                             options={this.getSelectOptions("years")}
+                            value={this.getFieldValue('year', true)}
                             onChange={(e) => { this.setFieldValue('year', e.label) }} />
                         <Error errors={this.getFieldError("year")} />
                     </div>
                     <div className="input-group col">
                         <Select placeholder="Campus"
                             options={this.getSelectOptions("campuses")}
+                            value={this.getFieldValue('campus', true)}
                             onChange={(e) => { this.setFieldValue('campus', e.label) }} />
                         <Error errors={this.getFieldError("campus")} />
                     </div>
@@ -107,6 +122,7 @@ class AddStudent extends Component {
                 <div className="input-group">
                     <Select placeholder="Stay"
                         options={this.getSelectOptions("stayTypes")}
+                        value={this.getFieldValue('stayType', true)}
                         onChange={(e) => { this.setFieldValue('stayType', e.label) }} />
                     <Error errors={this.getFieldError("stayType")} />
                 </div>
@@ -119,18 +135,21 @@ class AddStudent extends Component {
                 <div className="input-group">
                     <input className="input-field w-100" type="text"
                         placeholder="Book name"
+                        value={this.getFieldValue('bookName')}
                         onChange={(e) => { this.setFieldValue('bookName', e.target.value) }} />
                     <Error errors={this.getFieldError("bookName")} />
                 </div>
                 <div className="input-group">
                     <input className="input-field w-100" type="text"
                         placeholder="Subject name"
+                        value={this.getFieldValue('subjectName')}
                         onChange={(e) => { this.setFieldValue('subjectName', e.target.value) }} />
                     <Error errors={this.getFieldError("subjectName")} />
                 </div>
                 <div className="input-group">
                     <input className="input-field w-100" type="text"
                         placeholder="Author name"
+                        value={this.getFieldValue('authorName')}
                         onChange={(e) => { this.setFieldValue('authorName', e.target.value) }} />
                     <Error errors={this.getFieldError("authorName")} />
                 </div>
@@ -143,12 +162,14 @@ class AddStudent extends Component {
                 <div className="input-group">
                     <Select placeholder="Select Student"
                         options={this.state.studentId}
+                        value={this.getFieldValue('studentId', true)}
                         onChange={(e) => { this.setFieldValue('studentId', e.value) }} />
                     <Error errors={this.getFieldError("studentId")} />
                 </div>
                 <div className="input-group">
                     <Select placeholder="Select Book"
                         options={this.state.bookId}
+                        value={this.getFieldValue('bookId', true)}
                         onChange={(e) => { this.setFieldValue('bookId', e.value) }} />
                     <Error errors={this.getFieldError("bookId")} />
                 </div>
@@ -167,8 +188,9 @@ class AddStudent extends Component {
     }
     submitForm() {
         let form = this.state.form;
-        let url = `/api/v1/${form.selectedForm}s/${(form.fields._id ? "edit" : "new")}`;
-        api.post(url, form.fields).then(res => {
+        let url = `/api/v1/${form.selectedForm}`;
+        let method = form.fields._id ? "put" : "post";
+        api[method](url, form.fields).then(res => {
             console.log(res.data);
             toastr.success('Success', res.data.message, { transitionIn: 'bounceIn' });
         }).catch(err => { console.log(err); })
@@ -194,22 +216,18 @@ class AddStudent extends Component {
         if (hasError) { return; }
         this.submitForm();
     }
-    componentWillReceiveProps(nextProps) {
-        this.setState({ scalePopup: nextProps.showPopup });
-    }
     hidePopup() {
-        this.setState({ scalePopup: false }, () => { setTimeout(this.props.togglePopup, 500) });
+        this.setState({ popupScale: false }, () => { setTimeout(this.props.togglePopupDisplay, 500) });
     }
     dontClose(e) { e.stopPropagation() }
-    getSelectLabelValue(value) {
-        return { label: value, value: value };
-    }
+    getSelectLabelValue(value) { return { label: value, value: value }; }
     render() {
+        console.log(this.state.form.fields)
         return (
-            <div className={`popup popup-${this.props.showPopup}`}>
-                <div className={`popup-container popup-blur-${this.state.scalePopup}`}
+            <div className={`popup`}>
+                <div className={`popup-container popup-blur-${this.state.popupScale}`}
                     onClick={this.hidePopup}>
-                    <div className={`popup-content scale-${this.state.scalePopup}`} onClick={this.dontClose}>
+                    <div className={`popup-content scale-${this.state.popupScale}`} onClick={this.dontClose}>
                         <div className="popup-header">
                             <div className="popup-title d-flex">
                                 <span className="m-auto">{this.getSelectedFormLabel()}</span>

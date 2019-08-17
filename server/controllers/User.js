@@ -1,17 +1,25 @@
 let mongo = require('../models/db');
-let status = require('../models/status');
 
-exports.all = function (req, res) {
+exports.get = function (req, res) {
     mongo.db.collection("users").find({}).toArray((err, results) => {
-        if (err) return status.error(res, { err: err });
-        status.success(res, { results: results });
+        if (err) return res.status(500).json({ message: err.message, err: err });
+        res.json({ message: "Get success", results: results });
     })
 }
 
-exports.new = function (req, res) {
-    console.log("data::", req.data);
-    mongo.db.collection("users").insertOne(req.data, (err, result) => {
-        if (err) return status.error(res, { err: err });
-        status.success(res, { message: "Successfully added" });
+exports.create = function (req, res) {
+    mongo.db.collection("users").insertOne(req.data, (err, results) => {
+        if (err) return res.status(500).json({ message: err.message, err: err });
+        res.json({ message: "Create success", results: results });
+    });
+}
+
+exports.update = function (req, res) {
+    let query = { _id: mongo.ObjectId(req.data._id) };
+    delete req.data._id;
+    let data = { $set: req.data };
+    mongo.db.collection("users").updateOne(query, data, (err, results) => {
+        if (err) return res.status(500).json({ message: err.message, err: err });
+        res.json({ message: "Update success", results: results });
     });
 }

@@ -1,11 +1,11 @@
-const MongoClient = require('mongodb').MongoClient;
+const mongodb = require('mongodb');
+const MongoClient = mongodb.MongoClient;
 
 const url = 'mongodb://localhost:27017';
 const dbName = 'peek-a-book';
 
-exports.connect = () => {
-    return new Promise((resolve, reject) => {
-        console.log("connection requested to mongo db");
+exports.connect = function () {
+    return new Promise(function (resolve, reject) {
         MongoClient.connect(url, { useNewUrlParser: true }, function (err, client) {
             if (err) return reject(err);
             resolve("connected to mongo db");
@@ -13,3 +13,4 @@ exports.connect = () => {
         });
     })
 }
+exports.ObjectId = function (_id) { return new mongodb.ObjectID(_id) };

@@ -6,10 +6,12 @@ let BookController = require('./controllers/Book');
 let UserMiddleware = require('./middlewares/User');
 let BookMiddleware = require('./middlewares/Book');
 
-app.get('/users/list', UserController.all);
-app.post('/users/new', UserMiddleware.new, UserController.new);
+app.get('/users/all', UserController.get);
+app.post('/user', UserMiddleware.create, UserController.create);
+app.put('/user', UserMiddleware.update, UserController.update);
 
-app.get('/books/list', BookController.all);
-app.post('/books/new', BookMiddleware.new, BookController.new);
+app.get('/books/all', BookController.get);
+app.post('/book', BookMiddleware.create, BookController.create);
+app.put('/book', BookMiddleware.update, BookController.update);
 
 module.exports = app;
