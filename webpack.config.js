@@ -1,4 +1,5 @@
-const path = require('path')
+const path = require('path');
+var webpack = require('webpack');
 
 module.exports = {
     watchOptions: {
@@ -29,4 +30,5 @@ module.exports = {
             },
         ]
     },
+    plugins: []
 }

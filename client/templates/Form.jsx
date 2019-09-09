@@ -1,26 +1,22 @@
 import React, { Component } from 'react';
 import Select from 'react-select';
-import Error, * as validator from './Error/Error.jsx';
+import Error from './Error.jsx';
 import api from 'axios';
 import { toastr } from 'react-redux-toastr'
-import { formConfig, toastrConfig } from '../config/index'
+import { formConfig, toastrConfig } from '../config/index';
 
 const formTypes = formConfig.formTypes;
-
 const defaultForm = formConfig.defaultForm;
 
-class AddStudent extends Component {
+class Form extends Component {
     constructor(props) {
         super(props);
         this.state = {
             forms: formConfig.forms,
             form: this.props.form || defaultForm,
-            popupScale: true,
             defaultSelects: {}
         }
-        this.scalePopup = this.scalePopup.bind(this);
         this.setForm = this.setForm.bind(this);
-        this.hidePopup = this.hidePopup.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.setUsers = this.setUsers.bind(this);
         this.setBooks = this.setBooks.bind(this);
@@ -41,16 +37,13 @@ class AddStudent extends Component {
         this.state.defaultSelects.books = books;
         this.forceUpdate();
     }
-    scalePopup() {
-        this.setState({ popupScale: false }, () => { this.setState({ popupScale: true }) });
-    }
     setForm(form) {
         let cForm = this.state.form;
         console.log("selectedForm1", form)
         if (form.value == cForm.selectedForm) return;
         cForm.selectedForm = form.value;
         this.setState({ form: cForm });
-        this.scalePopup();
+        this.props.scalePopup();
     }
     getSelectedFormLabel() {
         let form = this.state.form;
@@ -60,11 +53,11 @@ class AddStudent extends Component {
     }
     getFormFields() {
         let selectedForm = this.state.form.selectedForm;
-        switch (selectedForm) {
-            case 'user': return this.getUserFormFields();
-            case 'book': return this.getBookFormFields();
-            case 'buy-book': return this.getBuyBookFormFields();
-        }
+        // switch (selectedForm) {
+        //     case 'user': return this.getUserFormFields();
+        //     case 'book': return this.getBookFormFields();
+        //     case 'buy-book': return this.getBuyBookFormFields();
+        // }
     }
     setFieldValue(key, value) {
         this.state.form.fields[key] = value;
@@ -93,7 +86,7 @@ class AddStudent extends Component {
             </div>
         );
     }
-    getSelectTag(fieldName, options, label, placeholder = '', isMulti = true) {
+    getSelectTag(fieldName, options, label, placeholder = '', isMulti = false) {
         return (
             <div className="input-group">
                 <div className={`input-container flex-column`}>
@@ -110,7 +103,7 @@ class AddStudent extends Component {
     }
     getUserFormFields() {
         return (
-            <div>
+            <div className="flex-wrap">
                 {this.getInputTag('name', 'Name')}
                 {this.getInputTag('rollNo', 'Roll no')}
                 {this.getInputTag('phone', 'Phone')}
@@ -183,38 +176,28 @@ class AddStudent extends Component {
         if (hasError) { return; }
         this.submitForm();
     }
-    hidePopup() {
-        this.setState({ popupScale: false, form: defaultForm },
-            () => { setTimeout(this.props.togglePopupDisplay, 500) });
-    }
-    dontClose(e) { e.stopPropagation() }
     getSelectLabelValue(value) { return { label: value, value: value }; }
     render() {
         return (
-            <div className={`popup`}>
-                <div className={`popup-container popup-blur-${this.state.popupScale}`}
-                    onClick={this.hidePopup}>
-                    <div className={`popup-content scale-${this.state.popupScale}`} onClick={this.dontClose}>
-                        <div className="popup-header">
-                            <div className="popup-title d-flex">
-                                <span className="m-auto">{this.getSelectedFormLabel()}</span>
-                            </div>
-                            <Select placeholder="Select Form *"
-                                value={this.getSelectLabelValue(formTypes[this.state.form.selectedForm].label)}
-                                options={this.state.forms}
-                                onChange={this.setForm} />
-                        </div>
-                        <div className="popup-body">
-                            <form onSubmit={this.handleSubmit} autoComplete='off'>
-                                {this.getFormFields()}
-                                {this.getFormFooter()}
-                            </form>
-                        </div>
+            <div className="form-container">
+                <div className="popup-header">
+                    <div className="popup-title d-flex">
+                        <span className="m-auto">{this.getSelectedFormLabel()}</span>
                     </div>
+                    <Select placeholder="Select Form *"
+                        value={this.getSelectLabelValue(formTypes[this.state.form.selectedForm].label)}
+                        options={this.state.forms}
+                        onChange={this.setForm} />
+                </div>
+                <div className="popup-body">
+                    <form onSubmit={this.handleSubmit} autoComplete='off'>
+                        {this.getFormFields()}
+                        {this.getFormFooter()}
+                    </form>
                 </div>
             </div>
         );
     }
 }
 
-export default AddStudent;
+export default Form;

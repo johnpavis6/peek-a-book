@@ -2,22 +2,23 @@ import React, { Component } from 'react';
 import api from 'axios';
 import _ from 'lodash';
 import { toastr } from 'react-redux-toastr'
+import config from '../config/index'
 
-const options = { transitionIn: 'bounceInDown', transitionOut: 'bounceOutUp' };
-
-class Users extends Component {
-    constructor() {
-        super();
+class ListResults extends Component {
+    constructor(props) {
+        super(props);
         this.state = {
             results: [],
-            filterKeyValues: { name: "-" }
+            filterKeyValues: {}
         }
         this.getResults = this.getResults.bind(this);
         this.filteredResults = this.filteredResults.bind(this);
-        this.getRenderData = this.getRenderData.bind(this);
+        this.getUsers = this.getUsers.bind(this);
+        this.getBooks = this.getBooks.bind(this);
     }
-    getResults() {
-        api.get('/api/v1/users/all').then(res => {
+    getResults(type) {
+        let url = `/api/v1/${type}/all`;
+        api.get(url).then(res => {
             this.setState({ results: res.data.results, filteredResults: res.data.data });
         })
     }
@@ -33,19 +34,19 @@ class Users extends Component {
         return ans;
     }
     confirmDeleteEntry(_id) {
-        let url = `/api/v1/user/${_id}`;
+        let url = `/api/v1/${'user'}/${_id}`;
         api.delete(url).then(res => {
-            toastr.success('Success', res.data.message, options);
+            toastr.success('Success', res.data.message, config.toastr.options);
             this.getResults();
         }).catch(err => {
             console.error("ERR", err);
-            toastr.error('Error', err.message, options);
+            toastr.error('Error', err.message, config.toastr.options);
         });
     }
     deleteEntry(_id) {
         toastr.confirm('Are you sure?', { onOk: () => { this.confirmDeleteEntry(_id) } })
     }
-    getRenderData() {
+    getUsers() {
         return this.filteredResults().map((entry, index) => {
             return (
                 <div className="card" key={index}>
@@ -83,15 +84,41 @@ class Users extends Component {
             );
         })
     }
+    getBooks() {
+        return this.filteredResults().map((entry, index) => {
+            return (
+                <div className="card" key={index}>
+                    <div className="d-flex detail">
+                        <div className="icon"><i className="far fa-user"></i></div>
+                        <div className="text">{entry.subjectName}</div>
+                    </div>
+                    <div className="d-flex detail">
+                        <div className="icon"><i className="fas fa-mobile-alt"></i></div>
+                        <div className="text">{entry.bookName}</div>
+                    </div>
+                    <div className="d-flex detail">
+                        <div className="icon"><i className="far fa-envelope-open"></i></div>
+                        <div className="text">{entry.authorName}</div>
+                    </div>
+                    <div className="d-flex">
+                        <div className="detail card-btn left-btn"
+                            onClick={() => { this.props.editPopup('book', entry) }}>Edit</div>
+                        <div className="detail card-btn right-btn"
+                            onClick={() => { this.deleteEntry(entry._id) }}>Del</div>
+                    </div>
+                </div>
+            );
+        })
+    }
     componentDidMount() {
-        this.getResults();
+        this.getResults(this.props.getDataFor);
     }
     render() {
         return (
             <div className="flex-row">
-                {this.getRenderData()}
+                {this[this.props.renderData]()}
             </div>
         );
     }
 }
-export default Users;
+export default ListResults;

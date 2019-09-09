@@ -41,11 +41,11 @@ class Books extends Component {
     deleteEntry(_id) {
         let url = `/api/v1/book/${_id}`;
         api.delete(url).then(res => {
-            toastr.success('Success', res.data.message, options);
+            toastr.success('Success', res.data.message, config.toastr.options);
             this.getResults();
         }).catch(err => {
             console.log(err);
-            toastr.error('Error', err.message, options);
+            toastr.error('Error', err.message, config.toastr.options);
         });
     }
     getRenderData() {
