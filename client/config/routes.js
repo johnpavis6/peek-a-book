@@ -1,22 +1,22 @@
-import React, { Component } from 'react';
+import React from 'react';
 import ListResults from '../templates/ListResults.jsx'
 exports.routes = [
     {
         path: '/users/list',
         link: <i className="fas fa-user-graduate"></i>,
         RouteComponent: ListResults,
-        RouteComponentArgs: { getDataFor: 'users', renderData: 'getUsers' }
+        selectedView: 'User',
     },
     {
         path: '/books/list',
         link: <i className="fas fa-book"></i>,
         RouteComponent: ListResults,
-        RouteComponentArgs: { getDataFor: 'books', renderData: 'getBooks' }
+        selectedView: 'Book',
     },
-    {
-        path: '/buy-books/list',
-        link: <i className="fas fa-user-graduate"></i>,
-        RouteComponent: ListResults,
-        RouteComponentArgs: { getDataFor: 'buybooks', renderData: 'getBuybooks' }
-    },
+    // {
+    //     path: '/buy-books/list',
+    //     link: <i className="fas fa-user-graduate"></i>,
+    //     RouteComponent: ListResults,
+    //     selectedView: 'Buy book',
+    // },
 ]

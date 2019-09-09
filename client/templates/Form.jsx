@@ -2,70 +2,39 @@ import React, { Component } from 'react';
 import Select from 'react-select';
 import Error from './Error.jsx';
 import api from 'axios';
-import { toastr } from 'react-redux-toastr'
-import { formConfig, toastrConfig } from '../config/index';
-
-const formTypes = formConfig.formTypes;
-const defaultForm = formConfig.defaultForm;
+import { forms, formTypes } from '../config/forms';
+import { toastr } from '../config/toastr';
+import Common from '../config/Common';
 
 class Form extends Component {
     constructor(props) {
         super(props);
+        this.formTypes = Common.getOptionsLabelAsValues(Object.keys(forms));
         this.state = {
-            forms: formConfig.forms,
-            form: this.props.form || defaultForm,
+            selectedForm: null,
             defaultSelects: {}
         }
         this.setForm = this.setForm.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-        this.setUsers = this.setUsers.bind(this);
-        this.setBooks = this.setBooks.bind(this);
-    }
-    getData(type, callback) {
-        let url = `/api/v1/${type}/all`;
-        api.get(url).then(callback).catch(err => { console.error(err) });
-    }
-    setUsers(resp) {
-        let data = resp.data.results;
-        let users = data.map(o => { return { label: `${o.name}-${o.rollNo}`, value: o._id } });
-        this.state.defaultSelects.users = users;
-        this.forceUpdate();
-    }
-    setBooks(resp) {
-        let data = resp.data.results;
-        let books = data.map(o => { return { label: o.bookName, value: o._id } });
-        this.state.defaultSelects.books = books;
-        this.forceUpdate();
     }
     setForm(form) {
-        let cForm = this.state.form;
-        console.log("selectedForm1", form)
-        if (form.value == cForm.selectedForm) return;
-        cForm.selectedForm = form.value;
-        this.setState({ form: cForm });
+        let selectedForm = form ? form.value : null;
+        if (selectedForm == this.state.selectedForm) return;
+        this.setState({ selectedForm: selectedForm });
         this.props.scalePopup();
     }
     getSelectedFormLabel() {
+        if (!this.state.selectedFormObj) return '';
         let form = this.state.form;
-        console.log("selectedForm", form.selectedForm)
         let label = `${form.fields._id ? "Edit" : "New "} ${formTypes[form.selectedForm].label} Form`;
         return label;
     }
-    getFormFields() {
-        let selectedForm = this.state.form.selectedForm;
-        // switch (selectedForm) {
-        //     case 'user': return this.getUserFormFields();
-        //     case 'book': return this.getBookFormFields();
-        //     case 'buy-book': return this.getBuyBookFormFields();
-        // }
-    }
     setFieldValue(key, value) {
         this.state.form.fields[key] = value;
-        this.forceUpdate();
     }
     getFieldValue(key, forSelect = false) {
         let value = this.state.form.fields[key];
-        return !forSelect ? value || '' : value ? this.getSelectLabelValue(value) : null;
+        return forSelect ? Common.getSelectLabelValue(value) : value || null;
     }
     getFieldError(key) {
         return this.state.form.errors && this.state.form.errors[key];
@@ -101,36 +70,18 @@ class Form extends Component {
             </div>
         );
     }
-    getUserFormFields() {
-        return (
+    getField(data) {
+        switch (data.type) {
+            case 'input': return this.getInputTag(data.name, data.name);
+            case 'select': return this.getSelectTag(data.name, data.options, data.name);
+        }
+    }
+    getFormFields() {
+        return this.state.selectedForm && (
             <div className="flex-wrap">
-                {this.getInputTag('name', 'Name')}
-                {this.getInputTag('rollNo', 'Roll no')}
-                {this.getInputTag('phone', 'Phone')}
-                {this.getInputTag('email', 'Email')}
-                {this.getSelectTag('department', formTypes.user.fields.department.options, 'Department')}
-                {this.getSelectTag('year', formTypes.user.fields.year.options, 'Year')}
-                {this.getSelectTag('campus', formTypes.user.fields.campus.options, 'Campus')}
-                {this.getSelectTag('stayType', formTypes.user.fields.stayType.options, 'Stay Type')}
+                {forms[this.state.selectedForm].fields.map(o => this.getField(o))}
             </div>
         );
-    }
-    getBookFormFields() {
-        return (
-            <div>
-                {this.getInputTag('bookName', 'Book name')}
-                {this.getInputTag('subjectName', 'Subject name')}
-                {this.getInputTag('authorName', 'Author name')}
-            </div>
-        );
-    }
-    getBuyBookFormFields() {
-        return (
-            <div>
-                {this.getSelectTag('studentId', 'campuses', 'Student')}
-                {this.getSelectTag('bookId', 'campuses', 'Book')}
-            </div>
-        )
     }
     getFormFooter() {
         return (
@@ -176,7 +127,6 @@ class Form extends Component {
         if (hasError) { return; }
         this.submitForm();
     }
-    getSelectLabelValue(value) { return { label: value, value: value }; }
     render() {
         return (
             <div className="form-container">
@@ -184,9 +134,9 @@ class Form extends Component {
                     <div className="popup-title d-flex">
                         <span className="m-auto">{this.getSelectedFormLabel()}</span>
                     </div>
-                    <Select placeholder="Select Form *"
-                        value={this.getSelectLabelValue(formTypes[this.state.form.selectedForm].label)}
-                        options={this.state.forms}
+                    <Select placeholder="Select form..."
+                        defaultValue={Common.getSelectLabelValue(this.state.selectedForm)}
+                        options={this.formTypes}
                         onChange={this.setForm} />
                 </div>
                 <div className="popup-body">

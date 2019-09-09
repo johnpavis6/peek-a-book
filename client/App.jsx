@@ -23,15 +23,15 @@ class App extends Component {
                             <span>Peek a Book</span>
                         </div>
                         <div className="add-btn" onClick={this.togglePopupDisplay}><i className="fas fa-plus"></i></div>
-                        {<Popup showAtInitial={true} ref={"popup"} ChildComponent={Form} />}
+                        {<Popup showAtInitial={false} ref={"popup"} ChildComponent={Form} />}
                     </div>
                     <div className="h-100 w-100 d-flex content">
                         <div className="content-menubar flex-column">
                             {routes.map((o, i) => <Link key={i} className="link" to={o.path}>{o.link}</Link>)}
                         </div>
                         <div className="w-100 content-body flex-column">
-                            {routes.map((o, i) => <Route path="/users/list" key={i}
-                                render={() => <o.RouteComponent {...RouteComponentArgs} />} />)}
+                            {routes.map((o, i) => <Route path={o.path} key={i}
+                                render={() => <o.RouteComponent selectedView={o.selectedView} />} />)}
                         </div>
                     </div>
                 </Router>
