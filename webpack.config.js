@@ -21,14 +21,18 @@ module.exports = {
                 loader: 'babel-loader',
                 query: {
                     presets: ['es2015', 'react']
-                },
-
+                }
             },
             {
                 test: /\.(sass|scss|css)$/,
                 loader: 'style-loader!css-loader!resolve-url-loader!sass-loader?sourceMap'
             },
         ]
+    },
+    resolve: {
+        alias: {
+            styles: path.join(__dirname + '/client/styles'),
+        }
     },
     plugins: []
 }

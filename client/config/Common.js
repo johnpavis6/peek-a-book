@@ -1,3 +1,4 @@
+import React from 'react';
 exports.getSelectLabelValue = function (value) {
     return value ? { label: value, value: value } : null;
 }

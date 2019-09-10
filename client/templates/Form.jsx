@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Select from 'react-select';
 import Error from './Error.jsx';
+import validator from './validator';
 import api from 'axios';
 import { forms, formTypes } from '../config/forms';
 import { toastr } from '../config/toastr';
@@ -12,7 +13,9 @@ class Form extends Component {
         this.formTypes = Common.getOptionsLabelAsValues(Object.keys(forms));
         this.state = {
             selectedForm: null,
-            defaultSelects: {}
+            defaultSelects: {},
+            fields: {},
+            errors: {},
         }
         this.setForm = this.setForm.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -24,25 +27,25 @@ class Form extends Component {
         this.props.scalePopup();
     }
     getSelectedFormLabel() {
-        if (!this.state.selectedFormObj) return '';
-        let form = this.state.form;
-        let label = `${form.fields._id ? "Edit" : "New "} ${formTypes[form.selectedForm].label} Form`;
+        let { selectedForm, fields } = this.state;
+        if (!selectedForm) return '';
+        let label = `${fields._id ? "Edit" : "New "} ${selectedForm} Form`;
         return label;
     }
     setFieldValue(key, value) {
-        this.state.form.fields[key] = value;
+        this.state.fields[key] = value;
     }
     getFieldValue(key, forSelect = false) {
-        let value = this.state.form.fields[key];
+        let value = this.state.fields[key];
         return forSelect ? Common.getSelectLabelValue(value) : value || null;
     }
     getFieldError(key) {
-        return this.state.form.errors && this.state.form.errors[key];
+        return this.state.errors && this.state.errors[key];
     }
-    getInputTag(fieldName, label, placeholder = '') {
+    getInputTag(fieldName, label, i, placeholder = '') {
         let fieldValue = this.getFieldValue(fieldName);
         return (
-            <div className="input-group">
+            <div className="input-group" key={i}>
                 <div className={`input-container flex-column`}>
                     <label className="label" htmlFor={`input-${fieldName}`}>{label}</label>
                     <input className="input-field w-100" type="text"
@@ -55,9 +58,9 @@ class Form extends Component {
             </div>
         );
     }
-    getSelectTag(fieldName, options, label, placeholder = '', isMulti = false) {
+    getSelectTag(fieldName, options, label, i, placeholder = '', isMulti = false) {
         return (
-            <div className="input-group">
+            <div className="input-group" key={i}>
                 <div className={`input-container flex-column`}>
                     <label className="label" htmlFor={`input-${fieldName}`}>{label}</label>
                     <Select placeholder={placeholder}
@@ -70,16 +73,17 @@ class Form extends Component {
             </div>
         );
     }
-    getField(data) {
-        switch (data.type) {
-            case 'input': return this.getInputTag(data.name, data.name);
-            case 'select': return this.getSelectTag(data.name, data.options, data.name);
+    getField(data, i) {
+        switch (data.tag) {
+            case 'input': return this.getInputTag(data.name, data.name, i);
+            case 'select': return this.getSelectTag(data.name, data.options, data.name, i);
         }
     }
     getFormFields() {
+        this.state.selectedForm && console.log("fields::", forms[this.state.selectedForm].fields)
         return this.state.selectedForm && (
             <div className="flex-wrap">
-                {forms[this.state.selectedForm].fields.map(o => this.getField(o))}
+                {forms[this.state.selectedForm].fields.map((o, i) => this.getField(o, i))}
             </div>
         );
     }
@@ -89,41 +93,37 @@ class Form extends Component {
                 <button className="ml-auto btn btn-success submit-btn" type="submit">Submit</button>
                 <span className="mlr-1"></span>
                 <button className="mr-auto btn btn-danger cancel-btn" type="button"
-                    onClick={this.hidePopup}>Cancel</button>
+                    onClick={this.props.hidePopup}>Cancel</button>
             </div>
         );
     }
     submitForm() {
-        let form = this.state.form;
-        let url = `/api/v1/${form.selectedForm}`;
-        let method = form.fields._id ? "put" : "post";
-        api[method](url, form.fields).then(res => {
-            this.hidePopup();
+        let { selectedForm, fields } = this.state;
+        let url = `/api/v1/${selectedForm}`;
+        let method = fields._id ? "put" : "post";
+        api[method](url, fields).then(res => {
+            this.props.hidePopup();
             console.log(res.data);
             toastr.success('Success', res.data.message, toastrConfig.options);
         }).catch(err => {
             console.log(err);
             toastr.success('Error', err.message, toastrConfig.options);
-        })
+        });
     }
-    getSelectedFormFields() { return Object.keys(formTypes[this.state.form.selectedForm].fields); }
     getErrors() {
         let errors = {}, hasError = false;
-        let formFields = this.state.form.fields, selectedFormFields = this.getSelectedFormFields();
+        let { selectedForm, fields } = this.state;
+        let formFields = fields, selectedFormFields = forms[selectedForm].fields;
         selectedFormFields.forEach(o => {
-            errors[o] = validator.isEmpty(formFields[o])
-            if (errors[o].length) hasError = true;
+            errors[o.name] = validator.isEmpty(formFields[o.name])
+            if (errors[o.name].length) hasError = true;
         });
         return { errors: errors, hasError: hasError };
-    }
-    setErrors(errors) {
-        this.state.form.errors = errors;
-        this.forceUpdate();
     }
     handleSubmit(e) {
         e.preventDefault();
         let { errors, hasError } = this.getErrors();
-        this.setErrors(errors);
+        this.setState({ errors: errors });
         if (hasError) { return; }
         this.submitForm();
     }

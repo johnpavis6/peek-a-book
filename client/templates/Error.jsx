@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import './Error.scss'
+import 'styles/Error.scss'
 
 class Error extends Component {
     constructor(props) {
@@ -21,21 +21,3 @@ class Error extends Component {
 }
 
 export default Error;
-
-import validator from 'validator';
-
-export function isEmail(val) {
-    let errors = isEmpty(val);
-    if (!val || !validator.isEmail(val)) errors.push("This field should be in email format")
-    return errors;
-}
-
-export function isPhone(val) {
-    let errors = isEmpty(val);
-    if (!val || !validator.isPhone(val)) errors.push("This field should be in phone format")
-    return errors;
-}
-
-export function isEmpty(val) {
-    return (!val) ? ["This field is required"] : [];
-}

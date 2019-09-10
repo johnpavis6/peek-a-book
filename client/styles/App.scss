@@ -4,78 +4,6 @@ $contentMenubarWidth: 50px;
   font-family: sans-serif;
 }
 $backgroundColor: #4890c3;
-html,
-body,
-#app {
-  margin: 0;
-  height: 100%;
-  width: 100%;
-}
-.w-100 {
-  width: 100%;
-}
-.w-50 {
-  width: 50%;
-}
-.h-100 {
-  height: 100%;
-}
-.h-auto {
-  height: auto;
-}
-.position-relative {
-  position: relative;
-}
-.position-fixed {
-  position: fixed;
-}
-.position-absolute {
-  position: absolute;
-}
-.d-flex {
-  display: flex;
-  .col:nth-child(n + 2) {
-    margin-left: 5px;
-  }
-}
-.flex-row {
-  display: flex;
-  flex-direction: row;
-}
-.flex-column {
-  display: flex;
-  flex-direction: column;
-}
-.flex-wrap {
-  display: flex;
-  flex-wrap: wrap;
-}
-.col-5 {
-  flex-basis: 50%;
-  padding: 0 5px;
-  box-sizing: border-box;
-}
-.m-auto {
-  margin: auto;
-}
-.mtb-auto {
-  margin: auto 0;
-}
-.mlr-auto {
-  margin: 0 auto;
-}
-.ml-auto {
-  margin-left: auto;
-}
-.mr-auto {
-  margin-right: auto;
-}
-.mlr-1 {
-  margin: 0 10px;
-}
-.mt-1 {
-  margin-top: 10px;
-}
 .navbar {
   height: $navbarHeight;
   width: 100%;
@@ -139,15 +67,6 @@ body,
       flex-shrink: 0;
     }
   }
-}
-.bg-white {
-  background: white;
-}
-.bg-black {
-  background: black;
-}
-.text-center {
-  text-align: center;
 }
 .input-group {
   display: block;
@@ -236,9 +155,6 @@ table {
     padding: 5px;
     border-right: 5px solid #d0d0d0;
   }
-}
-.overflow-auto {
-  overflow: auto;
 }
 .popup-true {
   display: block;

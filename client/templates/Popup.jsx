@@ -6,6 +6,7 @@ class Popup extends Component {
         this.state = {
             popupScale: this.props.showAtInitial || false,
         }
+        this.hidePopup = this.hidePopup.bind(this);
         this.scalePopup = this.scalePopup.bind(this);
         this.togglePopupDisplay = this.togglePopupDisplay.bind(this);
     }
@@ -17,6 +18,7 @@ class Popup extends Component {
     scalePopup() { this.setState({ popupScale: false }, () => { this.setState({ popupScale: true }) }); }
     dontClose(e) { e.stopPropagation() }
     togglePopupDisplay() {
+        console.log("here")
         this.setState({ popupScale: !this.state.popupScale }, () => { console.log("::", this.state) });
     }
     render() {
